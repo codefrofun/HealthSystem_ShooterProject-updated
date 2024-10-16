@@ -30,17 +30,67 @@ public class HealthSystem
 
     public void TakeDamage(int damage)
     {
-        // Write logic to handle damage. Check if it affects the shield first, and then the health.
+        if (damage < 0)
+        {
+            return; // Ignore negative damage
+        }
+
+        // Damage shield first
+        if (shield > 0)
+        {
+            int shieldDamage = Math.Min(damage, shield);
+            shield -= shieldDamage;
+            damage -= shieldDamage; // Remaining damage to health
+        }
+
+        // If there's remaining damage, apply to health
+        if (damage > 0)
+        {
+            health -= damage;
+            if (health < 0)
+            {
+                health = 0; // Health cannot go below 0
+            }
+        }
+
+        // Update health status after taking damage
+        UpdateHealthStatus();
     }
 
     public void Heal(int hp)
     {
-        // Restore health while ensuring it doesn't exceed the maximum.
+        // Check for negative healing input
+        if (hp < 0)
+        {
+            return; // Ignore negative healing
+        }
+
+        // Increase health
+        health += hp;
+
+        // Ensure health does not exceed 100
+        if (health > 100)
+        {
+            health = 100; // Cap health at 100
+        }
+
+        // Update health status after healing
+        UpdateHealthStatus();
     }
 
     public void RegenerateShield(int hp)
     {
-        // Restore shield while ensuring it doesn't exceed the maximum.
+        if (hp < 0)
+        {
+            return; // Ignore negative regeneration
+        }
+
+        shield += hp;
+
+        if (shield > 100)
+        {
+            shield = 100; // Cap shield at 100
+        }
     }
 
     public void Revive()
