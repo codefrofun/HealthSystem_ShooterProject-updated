@@ -95,7 +95,13 @@ public class HealthSystem
 
     public void Revive()
     {
-        // Reset health and shield, and decrease lives by one.
+        if (lives > 0)
+        {
+            health = 100;
+            shield = 100;
+            lives--;
+            UpdateHealthStatus(); // Update status after revive
+        }
     }
 
     public void ResetGame()
@@ -136,9 +142,3 @@ public class HealthSystem
         // Implement XP increase and level-up logic
     }
 }
-
-
-
-
-
-// Implement the Optional XP System (if desired) If you choose to include this, add the xp and level variables, along with methods to increase XP and manage leveling up.
