@@ -4635,7 +4635,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   maximumAmountOfEnemies: 10
-  intervalBetweenEnemies: {x: 2.2, y: 5.5}
+  intervalBetweenEnemies: {x: 2.3, y: 5.5}
   enemyPrefab: {fileID: 4969975616064872403, guid: ac41a4da46ef38f46ad619b87013cf90,
     type: 3}
 --- !u!4 &1897520894
