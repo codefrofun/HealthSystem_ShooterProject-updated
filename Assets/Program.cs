@@ -13,10 +13,9 @@ public class HealthSystem
 
     public HealthSystem()
     {
-        int health = 100;
+        health = 100;
         shield = 100;
         lives = 3;
-        ResetGame();
     }
 
         public string ShowHUD()
@@ -50,6 +49,14 @@ public class HealthSystem
             if (health < 0)
             {
                 health = 0; // Health cannot go below 0
+            }
+            if (lives > 0)
+            {
+                Revive();
+            }
+            else
+            {
+                ResetGame();
             }
         }
 
