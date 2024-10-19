@@ -21,10 +21,7 @@ public class HealthSystem
         public string ShowHUD()
     {
         // Implement HUD display
-        //display health
-        //display shield
-        //display lives
-        return $"{health} HP, {shield} Shield, {lives} Lives, Status: {healthStatus}";
+        return $"HP: {health}  Shield: {shield}  Lives: {lives} \n Status: {healthStatus}";
     }
 
     public void TakeDamage(int damage)
@@ -50,7 +47,11 @@ public class HealthSystem
             {
                 health = 0; // Health cannot go below 0
             }
-            if (lives > 0)
+        }
+
+        if (health <= 0)
+        {
+            if (lives > 1)
             {
                 Revive();
             }
@@ -59,7 +60,6 @@ public class HealthSystem
                 ResetGame();
             }
         }
-
         // Update health status after taking damage
         UpdateHealthStatus();
     }
@@ -113,6 +113,7 @@ public class HealthSystem
 
     public void ResetGame()
     {
+        Console.WriteLine("Startover");
         health = 100;
         shield = 100;
         lives = 3;

@@ -1,14 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
-public class Enemy : Actor {
+public class Enemy : Actor 
+{
     public static List<Enemy> allEnemies = new List<Enemy>();
 
     public List<GameObject> itemDrops = new List<GameObject>();
     float shootInterval = 1.5f;
+    public int health;
 
-    private void OnEnable() {
+    private void OnEnable() 
+    {
         allEnemies.Add(this);
     }
 
@@ -16,9 +20,11 @@ public class Enemy : Actor {
     {
         base.Start();
         healthSystem.lives = 0;
+        health = 100;
     }
 
-    private void OnDisable() {
+    private void OnDisable() 
+    {
         allEnemies.Remove(this);
     }
 

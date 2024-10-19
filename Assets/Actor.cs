@@ -52,7 +52,7 @@ public class Actor : MonoBehaviour
 
     public virtual void Die()
     {
-
+        //if (Enemy.health = 0)
     }
 
     public virtual Vector3 ShootDirection()
