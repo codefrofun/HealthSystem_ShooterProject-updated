@@ -1,13 +1,12 @@
 using System;
+using UnityEngine;
+using System.Diagnostics;
 public class HealthSystem
 {
-    // Variables
     public int health;
     public string healthStatus;
     public int shield;
     public int lives;
-
-    // Optional XP system variables
     public int xp;
     public int level;
 
@@ -16,22 +15,19 @@ public class HealthSystem
         health = 100;
         shield = 100;
         lives = 3;
+        xp = 0;
+        level = 1;
     }
 
-        public string ShowHUD()
+    public string ShowHUD()
     {
-        // Implement HUD display
-        return $"HP: {health}  Shield: {shield}  Lives: {lives} \n Status: {healthStatus}";
+        return $"HP: {health}  Shield: {shield}  Lives: {lives} \nStatus: {healthStatus} EXP: {xp}  Level: {level}";
     }
 
     public void TakeDamage(int damage)
     {
-        if (damage < 0)
-        {
-            return; // Ignore negative damage
-        }
+        if (damage < 0) return; 
 
-        // Damage shield first
         if (shield > 0)
         {
             int shieldDamage = Math.Min(damage, shield);
@@ -39,30 +35,20 @@ public class HealthSystem
             damage -= shieldDamage; // Remaining damage to health
         }
 
-        // If there's remaining damage, apply to health
         if (damage > 0)
         {
             health -= damage;
-            if (health < 0)
-            {
-                health = 0; // Health cannot go below 0
-            }
+            if (health < 0) health = 0; 
         }
 
         if (health <= 0)
         {
-            if (lives > 1)
-            {
-                Revive();
-            }
-            else
-            {
-                ResetGame();
-            }
+            Revive(); 
         }
-        // Update health status after taking damage
+
         UpdateHealthStatus();
     }
+
 
     public void Heal(int hp)
     {
@@ -72,13 +58,14 @@ public class HealthSystem
             return; // Ignore negative healing
         }
 
-        // Increase health
-        health += hp;
-
         // Ensure health does not exceed 100
         if (health > 100)
         {
             health = 100; // Cap health at 100
+        }
+        if (health < 100)
+        {
+            health += hp;
         }
 
         // Update health status after healing
@@ -92,11 +79,13 @@ public class HealthSystem
             return; // Ignore negative regeneration
         }
 
-        shield += hp;
-
+        if (shield < 100)
+        {
+            shield += hp;
+        }
         if (shield > 100)
         {
-            shield = 100; // Cap shield at 100
+            shield = 100;
         }
     }
 
@@ -104,10 +93,14 @@ public class HealthSystem
     {
         if (lives > 0)
         {
-            health = 100;
-            shield = 100;
-            lives--;
-            UpdateHealthStatus(); // Update status after revive
+            health = 100; 
+            shield = 100; 
+            lives--;      
+            UpdateHealthStatus();
+        }
+        else if (health == 0 && lives <= 0)
+        {
+            ResetGame();
         }
     }
 
@@ -147,6 +140,180 @@ public class HealthSystem
     // Optional XP system methods
     public void IncreaseXP(int exp)
     {
-        // Implement XP increase and level-up logic
+        xp += exp; 
+        while (xp >= 100) 
+        {
+            if (level < 99) 
+            {
+                level++; 
+                xp -= 100; 
+            }
+            else
+            {
+                xp = 100; 
+                break; 
+            }
+        }
     }
+
+    public static void RunAllUnitTests()
+    {
+        TestForNegativeNumbers();
+        TestTakeDamage_ShieldOnly();
+        TestTakeDamage_ShieldAndHealth();
+        TestTakeDamage_HealthOnly();
+        TestTakeDamage_HealthToZero();
+        TestTakeDamage_ShieldAndHealthToZero();
+        TestTakeDamage_NegativeDamage();
+
+        TestHeal_NormalHealing();
+        TestHeal_AtMaxHealth();
+        TestHeal_NegativeHealing();
+
+        TestRegenerateShield_Normal();
+        TestRegenerateShield_AtMax();
+        TestRegenerateShield_Negative();
+
+        TestRevive();
+        TestResetGame();
+
+        TestIncreaseXP_Normal();
+        TestIncreaseXP_LevelUpTo99();
+    }
+    public static void TestForNegativeNumbers()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.TakeDamage(-10);
+
+        UnityEngine.Debug.Assert(healthSystem.health == 100);
+    }
+
+    public static void TestTakeDamage_ShieldOnly()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.TakeDamage(30);
+        UnityEngine.Debug.Assert(healthSystem.shield == 70);
+        UnityEngine.Debug.Assert(healthSystem.health == 100);
+    }
+
+    public static void TestTakeDamage_ShieldAndHealth()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.TakeDamage(130); // Expecting shield to be 0 and health to be 70
+        UnityEngine.Debug.Assert(healthSystem.shield == 0, $"Expected 0 shield, got {healthSystem.shield}");
+        UnityEngine.Debug.Assert(healthSystem.health == 70, $"Expected 70 health, got {healthSystem.health}");
+    }
+
+    public static void TestTakeDamage_HealthOnly()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.shield = 0; // Set shield to 0
+        healthSystem.TakeDamage(50); // Expecting health to be 50
+        UnityEngine.Debug.Assert(healthSystem.health == 50, $"Expected 50 health, got {healthSystem.health}");
+    }
+
+    public static void TestTakeDamage_HealthToZero()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.shield = 0; // Set shield to 0
+        healthSystem.TakeDamage(200); // Expecting health to be 0
+        UnityEngine.Debug.Assert(healthSystem.health == 0, $"Expected 0 health, got {healthSystem.health}");
+        UnityEngine.Debug.Assert(healthSystem.lives == 2, $"Expected 2 lives, got {healthSystem.lives}");
+    }
+
+    public static void TestTakeDamage_ShieldAndHealthToZero()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.TakeDamage(250);
+        UnityEngine.Debug.Assert(healthSystem.health == 0);
+        UnityEngine.Debug.Assert(healthSystem.shield == 0);
+    }
+
+    public static void TestTakeDamage_NegativeDamage()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.TakeDamage(-10);
+        UnityEngine.Debug.Assert(healthSystem.health == 100);
+        UnityEngine.Debug.Assert(healthSystem.shield == 100);
+    }
+
+    public static void TestHeal_NormalHealing()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.TakeDamage(30);
+        healthSystem.Heal(20);
+        UnityEngine.Debug.Assert(healthSystem.health == 90);
+    }
+
+    public static void TestHeal_AtMaxHealth()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.Heal(20);
+        UnityEngine.Debug.Assert(healthSystem.health == 100);
+    }
+
+    public static void TestHeal_NegativeHealing()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.Heal(-10);
+        UnityEngine.Debug.Assert(healthSystem.health == 100);
+    }
+
+    public static void TestRegenerateShield_Normal()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.RegenerateShield(20);
+        UnityEngine.Debug.Assert(healthSystem.shield == 100); // Should remain at max
+    }
+
+    public static void TestRegenerateShield_AtMax()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.shield = 50;
+        healthSystem.RegenerateShield(100);
+        UnityEngine.Debug.Assert(healthSystem.shield == 100);
+    }
+
+    public static void TestRegenerateShield_Negative()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.RegenerateShield(-10);
+        UnityEngine.Debug.Assert(healthSystem.shield == 100);
+    }
+
+    public static void TestRevive()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.TakeDamage(300); // Should reduce health to 0 and call Revive
+        UnityEngine.Debug.Assert(healthSystem.health == 100);
+        UnityEngine.Debug.Assert(healthSystem.shield == 100);
+        UnityEngine.Debug.Assert(healthSystem.lives == 2); // Lives should decrease by 1
+    }
+
+    public static void TestResetGame()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.TakeDamage(300); // Trigger a reset
+        healthSystem.ResetGame();
+        UnityEngine.Debug.Assert(healthSystem.health == 100);
+        UnityEngine.Debug.Assert(healthSystem.shield == 100);
+        UnityEngine.Debug.Assert(healthSystem.lives == 3);
+    }
+
+    public static void TestIncreaseXP_Normal()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.IncreaseXP(50);
+        UnityEngine.Debug.Assert(healthSystem.xp == 50);
+    }
+
+    public static void TestIncreaseXP_LevelUpTo99()
+    {
+        var healthSystem = new HealthSystem();
+        healthSystem.level = 98;
+        healthSystem.IncreaseXP(200);
+        UnityEngine.Debug.Assert(healthSystem.level == 99);
+        UnityEngine.Debug.Assert(healthSystem.xp == 0);
+    }
+
 }

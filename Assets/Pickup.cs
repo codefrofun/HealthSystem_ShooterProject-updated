@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pickup : MonoBehaviour {
-    public enum PickupType {
+public class Pickup : MonoBehaviour 
+{
+    public enum PickupType 
+    {
         Health,
         Shield,
         Exp
@@ -26,7 +28,8 @@ public class Pickup : MonoBehaviour {
     {
         if (other.gameObject == Player.instance.gameObject)
         {
-            switch (myType) {
+            switch (myType) 
+            {
                 case PickupType.Exp:
                     Player.instance.healthSystem.IncreaseXP(AmountToIncrease);
                     break;

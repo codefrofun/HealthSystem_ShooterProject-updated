@@ -9,8 +9,10 @@ public class Player : Actor {
     int lastCheckedLevel;
     int lastCHeckedShield;
 
-    public void Awake() {
+    public void Awake() 
+    {
         instance = this;
+        HealthSystem.RunAllUnitTests();
     }
 
     public override void Die()
