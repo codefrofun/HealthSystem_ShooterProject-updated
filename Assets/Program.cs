@@ -32,7 +32,6 @@ public class HealthSystem
             return;
         }
 
-        // Damage shield first
         if (shield > 0)
         {
             int shieldDamage = Math.Min(damage, shield);
@@ -81,7 +80,7 @@ public class HealthSystem
     {
         if (hp < 0)
         {
-            return; // Ignore negative regeneration
+            return; 
         }
 
         if (shield < 100)
@@ -208,7 +207,7 @@ public class HealthSystem
     public static void TestTakeDamage_ShieldAndHealth()
     {
         var healthSystem = new HealthSystem();
-        healthSystem.TakeDamage(130); // Expecting shield to be 0 and health to be 70
+        healthSystem.TakeDamage(130); 
         healthSystem.Heal(30); // because of the way I did the equation for takeDamage, I need to re-add the damage being done, because once the equation computes the hp status, it takes away the damage done from the health.
         UnityEngine.Debug.Assert(healthSystem.shield == 0, $"Expected 0 shield, got {healthSystem.shield}");
         UnityEngine.Debug.Assert(healthSystem.health == 70, $"Expected 70 health, got {healthSystem.health}");
@@ -227,11 +226,11 @@ public class HealthSystem
     public static void TestTakeDamage_HealthToZero()
     {
         var healthSystem = new HealthSystem();
-        healthSystem.preventRevive = true; // Prevent revive for this test
-        healthSystem.shield = 0; // Set shield to 0
+        healthSystem.preventRevive = true; 
+        healthSystem.shield = 0;
         healthSystem.TakeDamage(200);
         UnityEngine.Debug.Assert(healthSystem.health == 0, $"Expected 0 health, got {healthSystem.health}");
-        UnityEngine.Debug.Assert(healthSystem.lives == 3, $"Expected 3 lives, got {healthSystem.lives}"); // Assuming initial lives are 3
+        UnityEngine.Debug.Assert(healthSystem.lives == 3, $"Expected 3 lives, got {healthSystem.lives}"); 
     }
 
     public static void TestTakeDamage_ShieldAndHealthToZero()
@@ -255,7 +254,7 @@ public class HealthSystem
     {
         var healthSystem = new HealthSystem();
         healthSystem.shield = 0;
-        healthSystem.TakeDamage(30); // Health should be 70 after this
+        healthSystem.TakeDamage(30); 
         healthSystem.Heal(20 + 30);  // because of the way I did the equation for takeDamage, I need to re-add the damage being done, because once the equation computes the hp status, it takes away the damage done from the health.
         UnityEngine.Debug.Assert(healthSystem.health == 90, $"Expected 90 health, got {healthSystem.health}");
     }
@@ -278,7 +277,7 @@ public class HealthSystem
     {
         var healthSystem = new HealthSystem();
         healthSystem.RegenerateShield(20);
-        UnityEngine.Debug.Assert(healthSystem.shield == 100); // Should remain at max
+        UnityEngine.Debug.Assert(healthSystem.shield == 100); 
     }
 
     public static void TestRegenerateShield_AtMax()
@@ -299,16 +298,16 @@ public class HealthSystem
     public static void TestRevive()
     {
         var healthSystem = new HealthSystem();
-        healthSystem.TakeDamage(300); // Should reduce health to 0 and call Revive
+        healthSystem.TakeDamage(300);
         UnityEngine.Debug.Assert(healthSystem.health == 100);
         UnityEngine.Debug.Assert(healthSystem.shield == 100);
-        UnityEngine.Debug.Assert(healthSystem.lives == 2); // Lives should decrease by 1
+        UnityEngine.Debug.Assert(healthSystem.lives == 2); 
     }
 
     public static void TestResetGame()
     {
         var healthSystem = new HealthSystem();
-        healthSystem.TakeDamage(300); // Trigger a reset
+        healthSystem.TakeDamage(300); 
         healthSystem.ResetGame();
         UnityEngine.Debug.Assert(healthSystem.health == 100);
         UnityEngine.Debug.Assert(healthSystem.shield == 100);
